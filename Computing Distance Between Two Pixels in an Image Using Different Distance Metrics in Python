@@ -1,0 +1,41 @@
+import cv2
+import numpy as np
+import math
+
+def euclidean_distance(p, q):
+    return math.sqrt((q[0] - p[0]) ** 2 + (q[1] - p[1]) ** 2)
+
+def city_block_distance(p, q):
+    return abs(q[0] - p[0]) + abs(q[1] - p[1])
+
+def chessboard_distance(p, q):
+    return max(abs(q[0] - p[0]), abs(q[1] - p[1]))
+
+# Load the image
+image = cv2.imread('image.jpg')
+
+# Check if the image is loaded successfully
+if image is None:
+    print("Error: Could not load the image.")
+    exit()
+
+# Specify the pixel coordinates
+p = (50, 50)
+q = (100, 100)
+
+# Calculate distances
+euclidean = euclidean_distance(p, q)
+city_block = city_block_distance(p, q)
+chessboard = chessboard_distance(p, q)
+
+# Display the results
+print(f"Euclidean Distance between {p} and {q}: {euclidean}")
+print(f"City Block (Manhattan) Distance between {p} and {q}: {city_block}")
+print(f"Chessboard (Chebyshev) Distance between {p} and {q}: {chessboard}")
+
+# Display the image with the selected pixels
+cv2.circle(image, p, 5, (0, 0, 255), -1)  # Red circle at pixel p
+cv2.circle(image, q, 5, (255, 0, 0), -1)  # Blue circle at pixel q
+cv2.imshow('Image with Selected Pixels', image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()

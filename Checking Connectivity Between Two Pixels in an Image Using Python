@@ -1,0 +1,50 @@
+import numpy as np
+import cv2
+from scipy.ndimage import label
+
+def create_binary_image():
+    # Create a simple binary image (10x10) with a pattern
+    image = np.zeros((10, 10), dtype=np.uint8)
+
+    # Create a white square in the center
+    image[3:7, 3:7] = 255
+
+    # Add a white pixel disconnected from the square
+    image[8, 8] = 255
+
+    return image
+
+def is_connected(image, p, q, connectivity=4):
+    # Label connected components in the image
+    structure = None
+    if connectivity == 4:
+        structure = np.array([[0, 1, 0],
+                              [1, 1, 1],
+                              [0, 1, 0]])
+    elif connectivity == 8:
+        structure = np.ones((3, 3))
+    
+    labeled_image, num_features = label(image, structure=structure)
+    
+    # Check if the two pixels belong to the same connected component
+    return labeled_image[p] == labeled_image[q]
+
+# Create the binary image
+image = create_binary_image()
+
+# Display the binary image
+cv2.imshow('Binary Image', image)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+# Specify the pixel coordinates
+p = (4, 4)  # Inside the white square
+q = (8, 8)  # Disconnected white pixel
+
+# Check connectivity using 4-connectivity
+connected_4 = is_connected(image, p, q, connectivity=4)
+print(f"Pixels {p} and {q} are {'connected' if connected_4 else 'not connected'} (4-connectivity).")
+
+# Check connectivity using 8-connectivity
+connected_8 = is_connected(image, p, q, connectivity=8)
+print(f"Pixels {p} and {q} are {'connected' if connected_8 else 'not connected'} (8-connectivity).")
